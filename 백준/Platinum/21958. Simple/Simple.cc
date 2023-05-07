@@ -1,8 +1,8 @@
 #include <stdio.h>
-#define SIZE 200001
+#define SIZE 200005
 typedef long long int LL;
 
-int arr[SIZE];
+LL arr[SIZE];
 typedef struct _Node {
 	LL min0;
 	LL min1;
@@ -104,7 +104,7 @@ void push(int start, int end, int idx) {
 	}
 }
 
-void update_range(int start, int end, int idx, int left, int right, int value) {
+void update_range(int start, int end, int idx, int left, int right, LL value) {
 	push(start, end, idx);
 	if (end < left || right < start) return;
 	if (left <= start && end <= right) {
@@ -132,20 +132,33 @@ Node interval(int start, int end, int idx, int left, int right) {
 	return merge(interval(start, mid, idx * 2, left, right), interval(mid + 1, end, idx * 2 + 1, left, right));
 }
 
+void tree_debug(int start, int end, int idx) {
+	if (start == end) {
+		printf("[%d] min0 %lld min1 %lld / max0 %lld max1 %lld (%lld)\n", start, tree[idx].min0, tree[idx].min1, tree[idx].max0, tree[idx].max1, tree[idx].lazy);
+		return;
+	}
+	printf("[%d-%d] min0 %lld min1 %lld / max0 %lld max1 %lld (%lld)\n", start,end, tree[idx].min0, tree[idx].min1, tree[idx].max0, tree[idx].max1, tree[idx].lazy);
+	int mid = (start + end) / 2;
+	tree_debug(start, mid, idx * 2);
+	tree_debug(mid + 1, end, idx * 2 + 1);
+}
+
 int main() {
 	int n;
 	scanf("%d", &n);
-	for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+	for (int i = 0; i < n; i++) scanf("%lld", &arr[i]);
 	init(0, n - 1, 1);
 
 	int q;
 	scanf("%d", &q);
 	for (int i = 0; i < q; i++) {
+		//tree_debug(0, n - 1, 1);
 		int mode;
 		scanf("%d", &mode);
 		if (mode == 0) {
-			int a, b, val;
-			scanf("%d %d %d", &a, &b, &val);
+			int a, b;
+			LL val;
+			scanf("%d %d %lld", &a, &b, &val);
 			update_range(0, n - 1, 1, a - 1, b - 1, val);
 		}
 		else {
