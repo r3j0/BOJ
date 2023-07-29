@@ -1,0 +1,5 @@
+a = int(input())
+b = int(input())
+now = a + (b*7)
+if now > 30: print(0)
+else: print(1)
