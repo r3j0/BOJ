@@ -14,5 +14,7 @@ for _ in range(n):
     min_y = min(min_y, y2)
     min_z = min(min_z, z2)
 
-res = (min_x-max_x)*(min_y-max_y)*(min_z-max_z)
+res = 0
+if min_x > max_x and min_y > max_y and min_z > max_z: 
+    res = (min_x-max_x)*(min_y-max_y)*(min_z-max_z)
 print(max(res, 0))
