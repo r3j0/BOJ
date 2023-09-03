@@ -2,9 +2,6 @@
 
 int main(void) {
     int n; scanf("%d", &n);
-    int result = 0;
-    for (int i = 1; i <= n; i++)
-        result += i;
-    printf("%d", result);
+    printf("%d", n*(n+1)/2);
     return 0;
 }
