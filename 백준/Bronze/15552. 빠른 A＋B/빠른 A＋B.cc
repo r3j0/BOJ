@@ -1,11 +1,14 @@
-#include <stdio.h>
+#include <iostream>
+using namespace std;
 
 int main(void) {
-	int t; scanf("%d", &t);
-
+	cin.tie(NULL); ios::sync_with_stdio(false);
+	
+	int t; cin >> t;
+	
 	while(t--) {
-		int a, b; scanf("%d %d", &a, &b);
-		printf("%d\n", a+b);
+		int a, b; cin >> a >> b;
+		cout << a + b << "\n";
 	}
 	return 0;
 }
