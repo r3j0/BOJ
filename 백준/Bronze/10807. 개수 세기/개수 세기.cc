@@ -1,16 +1,15 @@
 #include <stdio.h>
-int arr[101]; 
+int arr[201] = {0,}; 
 
 int main(void) {
     int n; scanf("%d", &n);
-    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    int tmp;
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &tmp);
+        arr[tmp+100] += 1;
+    }
 
     int v; scanf("%d", &v);
-    int result = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == v) result += 1;
-    }    
-
-    printf("%d", result);
+    printf("%d", arr[v+100]);
     return 0;
 }
