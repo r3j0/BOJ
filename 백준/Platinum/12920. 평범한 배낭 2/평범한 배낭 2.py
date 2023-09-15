@@ -6,11 +6,13 @@ arr = [list(map(int, input().rstrip().split())) for _ in range(n)]
 narr = []
 # 물건을 분할하기
 for i in range(n):
-    now = arr[i][2]
-    while now > 0:
-        k = now - (now >> 1)
-        narr.append([k*arr[i][0], k*arr[i][1]])
-        now >>= 1
+    now = 1
+    done = 0
+    while now <= arr[i][2]:
+        go = min(now, arr[i][2] - done)
+        done += go
+        narr.append([go*arr[i][0], go*arr[i][1]])
+        now <<= 1
 
 dp = [[0 for _ in range(m+1)] for _ in range(len(narr)+1)]
 for weight in range(1, m+1):
