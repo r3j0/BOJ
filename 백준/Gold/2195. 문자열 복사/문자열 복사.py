@@ -1,8 +1,8 @@
 import sys
 input = sys.stdin.readline
 
-s = str(input().rstrip())[::-1]
-p = str(input().rstrip())[::-1]
+s = input().rstrip()
+p = input().rstrip()
 
 record = 0
 cnt = 0
