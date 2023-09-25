@@ -1,0 +1,6 @@
+L = int(input().rstrip())
+A = int(input().rstrip())
+B = int(input().rstrip())
+C = int(input().rstrip())
+D = int(input().rstrip())
+print(L - max(A//C + (1 if A % C != 0 else 0), B//D + (1 if B % D != 0 else 0)))
