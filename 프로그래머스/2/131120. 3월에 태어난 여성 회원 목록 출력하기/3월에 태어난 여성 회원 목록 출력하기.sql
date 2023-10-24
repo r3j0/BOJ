@@ -1,0 +1,4 @@
+-- 코드를 입력하세요
+SELECT MEMBER_ID, MEMBER_NAME, GENDER, substr(DATE_OF_BIRTH, 1, 10) DATE_OF_BIRTH
+FROM MEMBER_PROFILE
+WHERE substr(DATE_OF_BIRTH, 6, 2) = '03' and GENDER = 'W' and TLNO is not null;
