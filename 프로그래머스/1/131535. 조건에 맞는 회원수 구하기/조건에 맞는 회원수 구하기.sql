@@ -1,0 +1,4 @@
+-- 코드를 입력하세요
+SELECT COUNT(*) USERS
+FROM USER_INFO
+WHERE AGE >= 20 AND AGE <= 29 AND substr(JOINED, 1, 4) = '2021';
