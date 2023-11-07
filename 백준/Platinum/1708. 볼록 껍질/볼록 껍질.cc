@@ -11,33 +11,35 @@ typedef struct _POINT {
 int n;
 Point p[MAX_POINT];
 
-Point tmp_p[MAX_POINT];
-int stack[MAX_POINT];
-int stack_size = 0;
-
 LL CCW(Point p1, Point p2, Point p3) { return (p1.x*p2.y + p2.x*p3.y + p3.x*p1.y) - (p2.x*p1.y + p3.x*p2.y + p1.x*p3.y); }
 
 int isCcw(Point p1, Point p2, Point p3) { return (CCW(p1, p2, p3) > 0) ? 1 : 0; }
 int isCw(Point p1, Point p2, Point p3) { return (CCW(p1, p2, p3) < 0) ? 1 : 0; }
 int isLinear(Point p1, Point p2, Point p3) { return (CCW(p1, p2, p3) == 0) ? 1 : 0; }
 
+int MergeConvexHullComp(Point pLeft, Point pRight, Point p0) {
+    if((pLeft.y - p0.y) * (pRight.x - p0.x) < (pLeft.x - p0.x) * (pRight.y - p0.y)) return -1;
+    else if ((pLeft.y - p0.y) * (pRight.x - p0.x) > (pLeft.x - p0.x) * (pRight.y - p0.y)) return 1;
+    else {
+        if (pLeft.y < pRight.y) return -1;
+        else if (pLeft.y > pRight.y) return 1;
+        else {
+            if (pLeft.x < pRight.x) return -1;
+            else return 1;
+        }
+    }
+}
+
 void MergeConvexHull(int start, int end) {
+    Point tmp_p[MAX_POINT];
     int leftidx = start;
     int mid = (start + end) / 2;
     int rightidx = mid + 1;
     int allidx = start;
 
     while(leftidx <= mid && rightidx <= end) {
-        if((p[leftidx].y - p[0].y) * (p[rightidx].x - p[0].x) < (p[leftidx].x - p[0].x) * (p[rightidx].y - p[0].y)) tmp_p[allidx++] = p[leftidx++];
-        else if ((p[leftidx].y - p[0].y) * (p[rightidx].x - p[0].x) > (p[leftidx].x - p[0].x) * (p[rightidx].y - p[0].y)) tmp_p[allidx++] = p[rightidx++];
-        else {
-            if (p[leftidx].y < p[rightidx].y) tmp_p[allidx++] = p[leftidx++];
-            else if (p[leftidx].y > p[rightidx].y) tmp_p[allidx++] = p[rightidx++];
-            else {
-                if (p[leftidx].x < p[rightidx].x) tmp_p[allidx++] = p[leftidx++];
-                else tmp_p[allidx++] = p[rightidx++];
-            }
-        }
+        if (MergeConvexHullComp(p[leftidx], p[rightidx], p[0]) < 0) tmp_p[allidx++] = p[leftidx++];
+        else tmp_p[allidx++] = p[rightidx++];
     }
 
     while(leftidx <= mid) tmp_p[allidx++] = p[leftidx++];
@@ -45,7 +47,6 @@ void MergeConvexHull(int start, int end) {
 
     for (int i = start; i <= end; i++) p[i] = tmp_p[i];
 }
-
 void MergeSortforConvexHull(int start, int end) {
     if (start < end) {
         int mid = (start + end) / 2;
@@ -55,7 +56,10 @@ void MergeSortforConvexHull(int start, int end) {
     }
 }
 
-int convexHull() {
+int convexHull() {    
+    int stack[MAX_POINT];
+    int stack_size = 0;
+
     Point minP = {p[0].x, p[0].y};
     int minIdx = 0;
     for (int i = 1; i < n; i++) {
