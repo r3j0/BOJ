@@ -7,12 +7,13 @@ int main(void) {
 
     scanf("%s", str);
     int len = strlen(str);
-    for (int i = 0; i < len; i++) {
-        reverse_str[i] = str[len - 1 - i];
+    int result = 1;
+    for (int i = 0; i < len/2; i++) {
+        if (str[i] != str[len - 1 - i]) {
+            result = 0;
+            break;
+        }
     }
-    reverse_str[len] = 0;
-
-    if (strcmp(str, reverse_str) == 0) printf("1");
-    else printf("0");
+    printf("%d", result);
     return 0;
 }
