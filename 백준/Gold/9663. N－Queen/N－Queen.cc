@@ -7,21 +7,23 @@ int col[15] = {0,};
 int diag_slash[30] = {0,};
 int diag_rev_slash[30] = {0,};
 
-void dfs(int c) {
-    if (c == n) {
+void dfs(int y) {
+    if (y == n) {
         count += 1;
         return;
     }
 
-    for (int i = 0; i < n; i++) {
-        if (col[i] == 0 && diag_slash[c+i] == 0 && diag_rev_slash[-c+i+n] == 0) {
-            col[i] = 1;
-            diag_slash[c+i] = 1;
-            diag_rev_slash[-c+i+n] = 1;
-            dfs(c + 1);
-            col[i] = 0;
-            diag_slash[c+i] = 0;
-            diag_rev_slash[-c+i+n] = 0;
+    for (int x = 0; x < n; x++) {
+        if (col[x] == 0 && diag_slash[y+x] == 0 && diag_rev_slash[x-y+n] == 0) {
+            col[x] = 1;
+            diag_slash[y+x] = 1;
+            diag_rev_slash[x-y+n] = 1;
+
+            dfs(y + 1);
+
+            col[x] = 0;
+            diag_slash[y+x] = 0;
+            diag_rev_slash[x-y+n] = 0;
         }
     }
 }
