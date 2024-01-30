@@ -22,7 +22,7 @@ sangmin_done = []
 jisoo_done = []
 cnt = 1
 
-for time in range(0, 86401):
+for time in range(0, 86401 + (100000 * 400)):
     if len(arr) > 0 and arr[0][0] == time:
         if arr[0][1] == 'B': sangmin_task.append(arr[0][2])
         else: jisoo_task.append(arr[0][2])
@@ -73,7 +73,6 @@ for time in range(0, 86401):
             if jisoo_task[0] == 0:
                 del jisoo_task[0]
     
-        
 print(len(sangmin_done))
 print(' '.join(map(str, sangmin_done)))
 print(len(jisoo_done))
