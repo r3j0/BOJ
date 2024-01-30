@@ -1,30 +1,5 @@
-# 0
-# 1
-# 2
-# 3
-# 4
-# 5
-# 6
-# 7
-# 8
-# 9
-# 10
-# 20
-# 21
-# 30
-# 31
-# 32
-# 40
-# 41
-# 42
-#..
-# 98
-# 210
-# 310
-# 320
-# 321
-# 410
-# 9_876_543_210
+import sys
+input = sys.stdin.readline
 
 n = int(input().rstrip())
 result = -1
@@ -50,7 +25,5 @@ def backtracking(now):
 
 backtracking([])
 arr.sort()
-if n < len(arr):
-    print(arr[n])
-else:
-    print(-1)
+if n < len(arr): print(arr[n])
+else: print(-1)
