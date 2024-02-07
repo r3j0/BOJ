@@ -5,7 +5,7 @@ input = sys.stdin.readline
 n, m = map(int, input().rstrip().split())
 maps = [list(input().rstrip()) for _ in range(n)]
 
-# 1. 불 영역을 세서 부모 할당 (그룹화)
+# 1. 불 영역을 세서 그룹화
 # 2. 돌로 나눠진 영역 세기 ( 불이 존재하는 돌 영역 개수가 최종 불 합쳐져야 하는 목표 )
 # 3. 불 BFS 를 하되 다른 불과 붙을 때 union을 하면서 영역 줄이기
 
@@ -37,9 +37,6 @@ for i in range(n):
 
             group_cnt += 1
             last_size = size
-
-#for i in range(n): print(' '.join(map(str, group[i])))
-#print()
 
 if group_cnt == 1: print(0, 0)
 elif group_cnt == 2: print(0, last_size)
@@ -89,7 +86,6 @@ else:
         b = group[by][bx]
         
         if a != b:
-            #print('UNION!!', a, b)
             group_cnt -= 1
             if a < b:
                 arr[group[by][bx]] = a
@@ -101,14 +97,12 @@ else:
 
     time = 0
     while queue_fire:
-        #print(queue_fire)
-        #print(goal, group_cnt - 1)
         if goal >= group_cnt - 1:
             break
         queue_size = len(queue_fire)
         for s in range(queue_size):
             now = queue_fire.popleft()
-            #print(now)
+
             for d in range(4):
                 ny = now[0] + row[d]
                 nx = now[1] + col[d]
@@ -123,23 +117,12 @@ else:
                             nnx = nx + col[dd]
 
                             if 0 <= nny < n and 0 <= nnx < m and maps[nny][nnx] == '0' and group[nny][nnx] != group[ny][nx]:
-                                #print('Type1', nny, nnx, ny, nx, 'union')
                                 res = union(nny, nnx, ny, nx)
                                 if res == -1: continue
                                 group[nny][nnx] = res
                                 group[ny][nx] = res
-
-                    elif maps[ny][nx] == '0' and group[ny][nx] != group[now[0]][now[1]]:
-                        #print('Type2', ny, nx, now[0], now[1], 'union')
-                        res = union(ny, nx, now[0], now[1])
-                        if res == -1: continue
-                        group[ny][nx] = res
-                        group[now[0]][now[1]] = res
         time += 1
 
-        #for i in range(n): print(''.join(maps[i]))
-        #print()
-    
     sums = 0
     for i in range(n): sums += maps[i].count('0')
-    print(time, sums)
+    print(time, sums)   
