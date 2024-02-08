@@ -13,7 +13,7 @@ visited = [0 for _ in range(v+1)]
 visited_cnt = 1
 
 result = [0 for _ in range(v+1)]
-def dfs(now, isRoot):
+def dfs(now, parent, isRoot):
     global visited_cnt
     visited[now] = visited_cnt
     visited_cnt += 1
@@ -22,12 +22,13 @@ def dfs(now, isRoot):
     child = 0
 
     for next in list(graph[now].keys()):
+        if next == parent: continue
         if visited[next] == 0:
             child += 1
-            low = dfs(next, 0)
+            low = dfs(next, now, 0)
             num = min(low, num)
 
-            if ((isRoot == 0) and (low >= visited[now])):
+            if ((isRoot == 0) and    (low >= visited[now])):
                 result[now] = 1
         else:
             num = min(num, visited[next])
@@ -39,7 +40,7 @@ def dfs(now, isRoot):
 
 for i in range(1, v+1):
     if visited[i] == 0:
-        dfs(i, 1)
+        dfs(i, 0, 1)
 
 res_cnt = 0
 res_arr = []
