@@ -16,7 +16,6 @@ for _ in range(t):
     queue.append([0, list(start_arr)])
 
     result = [0, 0, 0, 0, 0]
-    done = False
     while queue:
         size = len(queue)
         for s in range(size):
@@ -32,13 +31,10 @@ for _ in range(t):
                             break
                         elif result[i] < now_arr[i]:
                             break
-            if done == False:
-                for d in range(5):
-                    if 0 < now_num + dir[d] < 61 and visited[now_num + dir[d]] == 0:
-                        go_arr = list(now_arr)
-                        go_arr[d] += 1
-                        queue.append([now_num + dir[d], go_arr])
-        
-        if done == True: break
+            for d in range(5):
+                if 0 < now_num + dir[d] < 61 and visited[now_num + dir[d]] == 0:
+                    go_arr = list(now_arr)
+                    go_arr[d] += 1
+                    queue.append([now_num + dir[d], go_arr])
     
     print(' '.join(map(str, result)))
