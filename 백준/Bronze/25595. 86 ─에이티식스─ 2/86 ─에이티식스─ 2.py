@@ -15,7 +15,6 @@ for i in range(n):
             else: even += 1
         elif arr[i][j] == 2:
             now = (i+j) % 2
-if odd != 0 and even != 0: print('Kiriya')
-elif odd == 0 and even == 0: print('Lena')
-elif (odd != 0 and now == 0) or (even != 0 and now == 1): print('Lena')
+
+if (even == 0 and now == 0) or (odd == 0 and now == 1): print('Lena')
 else: print('Kiriya')
