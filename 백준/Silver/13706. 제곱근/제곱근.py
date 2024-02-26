@@ -3,7 +3,7 @@ input = sys.stdin.readline
 
 n = int(input().rstrip())
 start = 1
-end = n
+end = 10 ** 401
 while start < end:
     mid = (start + end) // 2
     if mid*mid < n:
