@@ -28,11 +28,12 @@ def dijkstra(start):
                 arr[next_location] = arr[now_location] + next_weight
                 heapq.heappush(queue, [arr[next_location], next_location])
 
-            if backtrack[next_location] == [-1, -1]:
-                backtrack[next_location] = [now_location, max(backtrack[now_location][1], next_weight)]
-            else:
-                if backtrack[next_location][1] > max(backtrack[now_location][1], next_weight):
+            if arr[now_location] + next_weight <= c:
+                if backtrack[next_location] == [-1, -1]:
                     backtrack[next_location] = [now_location, max(backtrack[now_location][1], next_weight)]
+                else:
+                    if backtrack[next_location][1] > max(backtrack[now_location][1], next_weight):
+                        backtrack[next_location] = [now_location, max(backtrack[now_location][1], next_weight)]
     #print(arr)
     #print(backtrack)
     if arr[b] <= c:
