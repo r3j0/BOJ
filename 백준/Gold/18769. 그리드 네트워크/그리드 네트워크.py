@@ -2,44 +2,38 @@ import sys
 import heapq
 input = sys.stdin.readline
 
+par = [0 for _ in range(500*500)]
+def parent(now):
+    while now != par[now]:
+        now = par[now]
+    return par[now]
+
+def union(a, b):
+    a = parent(a)
+    b = parent(b)
+
+    if a < b: par[b] = a
+    else: par[a] = b
+
 t = int(input().rstrip())
 for _ in range(t):
     r, c = map(int, input().rstrip().split())
-    graph = [{} for _ in range(r*c)]
-    edges = []
+    edges = [[] for _ in range(4)]
     for i in range(r):
         arr = list(map(int, input().rstrip().split()))
         for j in range(c-1):
-            graph[i*c+j][i*c+j+1] = arr[j]
-            graph[i*c+j+1][i*c+j] = arr[j]
-
-            heapq.heappush(edges, [arr[j], i*c+j, i*c+j+1])
+            edges[arr[j]-1].append([i*c+j, i*c+j+1])
     for i in range(r-1):
         arr = list(map(int, input().rstrip().split()))
         for j in range(c):
-            graph[i*c+j][(i+1)*c+j] = arr[j]
-            graph[(i+1)*c+j][i*c+j] = arr[j]
-
-            heapq.heappush(edges, [arr[j], i*c+j, (i+1)*c+j])
+            edges[arr[j]-1].append([i*c+j, (i+1)*c+j])
     
-    par = [i for i in range(r*c)]
-    def parent(now):
-        if now != par[now]:
-            par[now] = parent(par[now])
-        return par[now]
-
-    def union(a, b):
-        a = parent(a)
-        b = parent(b)
-
-        if a < b: par[b] = a
-        else: par[a] = b
-    
+    for k in range(r*c): par[k] = k
     res = 0
-    while edges:
-        now = heapq.heappop(edges)
-        if parent(now[1]) != parent(now[2]):
-            union(now[1], now[2])
-            res += now[0]
+    for k in range(4):
+        for l in range(len(edges[k])):
+            if parent(edges[k][l][0]) != parent(edges[k][l][1]):
+                union(edges[k][l][0], edges[k][l][1])
+                res += k+1
     
     print(res)
