@@ -1,65 +1,27 @@
-import sys
-input = sys.stdin.readline
+def dfs(idx, result, add, sub, mul, div): # 계산할 뒤의 값 인덱스, 이전계산결과, 연산자 남은수
+    global mx, mn
+    # 가지치기
+    if -10**9 > result or result > 10**9:
+        return
+    # 종료조건
+    if idx == n:
+        mx = max(mx, result)
+        mn = min(mn, result)
+        return
+    # 연산하기
+    if add > 0:
+        dfs(idx + 1, result + arr[idx], add-1, sub, mul, div)
+    if sub > 0:
+        dfs(idx + 1, result - arr[idx], add, sub-1, mul, div)
+    if mul > 0:
+        dfs(idx + 1, result * arr[idx], add, sub, mul-1, div)
+    if div > 0:
+        dfs(idx + 1, int(result/arr[idx]), add, sub, mul, div-1)
 
-n = int(input().rstrip())
-arr = list(map(int, input().rstrip().split()))
-ope = list(map(int, input().rstrip().split()))
-
-mv = 0
-nv = 0
-mv_avail = 0
-nv_avail = 0
-
-def calc(form):
-    now = form[0]
-    idx = 1
-    while idx < len(form):
-        oh = 0
-        if form[idx] == '+': now += form[idx + 1]
-        elif form[idx] == '-': now -= form[idx + 1]
-        elif form[idx] == '*': now *= form[idx + 1]
-        elif form[idx] == '/': 
-            if now < 0:
-                oh = 1
-                now *= -1
-            now //= form[idx + 1]
-            if oh == 1:
-                now *= -1
-        idx += 2
-    
-    return now
-
-def backtracking(a, op, r, s):
-    global n
-    global mv
-    global nv
-    global mv_avail
-    global nv_avail
-    if n == s:
-        result = calc(r)
-        if mv_avail == 0 or mv < result:
-            mv_avail = 1
-            mv = result
-        if nv_avail == 0 or nv > result:
-            nv_avail = 1
-            nv = result
-
-    for o in range(4):
-        if op[o] == 0: continue
-        op[o] -= 1
-        if o == 0: r.append('+')
-        elif o == 1: r.append('-')
-        elif o == 2: r.append('*')
-        elif o == 3: r.append('/')
-        r.append(arr[s])
-        s += 1
-        backtracking(a, op, r, s)
-        s -= 1
-        r.pop()
-        r.pop()
-        op[o] += 1
-
-backtracking(arr, ope, [arr[0]], 1)
-
-print(mv)
-print(nv)
+n = int(input())
+arr = list(map(int, input().split()))
+add, sub, mul, div = map(int, input().split())
+mx, mn = -10**9, 10**9
+dfs(1, arr[0], add, sub, mul, div)
+print(mx)
+print(mn)
