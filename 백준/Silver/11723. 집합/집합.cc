@@ -1,75 +1,101 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <iostream>
+using namespace std;
 
-int arr[30] = { 0, };
+bool arr[21] = {false};
 
-void add(int x) {
-	arr[x] = 1;
+bool Check(int x)
+{
+    return arr[x] == 1;
 }
 
-void rem(int x) {
-	arr[x] = 0;
+void Add(int x)
+{
+    if (!Check(x))
+    {
+        arr[x] = 1;
+    }
 }
 
-void check(int x) {
-	if (arr[x] == 1)
-		printf("1\n");
-	else
-		printf("0\n");
+void Remove(int x)
+{
+    if(Check(x))
+    {
+        arr[x] = 0;
+    }
 }
 
-void toggle(int x) {
-	if (arr[x] == 1)
-		rem(x);
-	else
-		add(x);
-}
-void all() {
-	for (int i = 1; i <= 20; i++)
-		add(i);
-}
-void empty() {
-	for (int i = 1; i <= 20; i++)
-		rem(i);
-
+void Toggle(int x)
+{
+    if(!Check(x))
+    {
+        arr[x] = 1;
+    }
+    else
+    {
+        arr[x] = 0;
+    }
 }
 
-int main(void) {
-	int n;
-	scanf("%d", &n);
-	for (int i = 0; i < n; i++) {
-		char ins[10] = { 0, };
-		scanf("%s", ins);
-		if (!strcmp("add", ins)) {
-			int insnum = 0;
-			scanf("%d", &insnum);
-			add(insnum);
-		}
-		else if (!strcmp("remove", ins)) {
-			int insnum = 0;
-			scanf("%d", &insnum);
-			rem(insnum);
-		}
-		else if (!strcmp("check", ins)) {
-			int insnum = 0;
-			scanf("%d", &insnum);
-			check(insnum);
-		}
-		else if (!strcmp("toggle", ins)) {
-			int insnum = 0;
-			scanf("%d", &insnum);
-			toggle(insnum);
-		}
-		else if (!strcmp("all", ins)) {
-			all();
-		}
-		else if (!strcmp("empty", ins)) {
-			empty();
-		}
-		else {
-			break;
-		}
-	}
-	return 0;
+void Empty()
+{
+    for (int i = 1; i < 21; i++)
+        {
+            arr[i] = 0;
+        }
+}
+
+void All()
+{
+    for (int i = 1; i < 21; i++)
+        {
+            arr[i] = 1;
+        }
+}
+
+int main() {
+    ios_base :: sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    int x = 0;
+    int t = 0;
+
+    cin >> t;
+    
+
+    for (int i = 0; i < t; i++)
+        {
+            char str[8];
+            cin >> str;
+
+            if (str[0] == 'a' && str[1] == 'd') 
+            {
+                cin >> x;
+                Add(x);
+            }
+            else if (str[0] == 'c') 
+            {
+                cin >> x;
+                cout << Check(x) << "\n";
+            }
+            else if (str[0] == 'r') 
+            {
+                cin >> x;
+                Remove(x);
+            }
+            else if (str[0] == 't') 
+            {
+                cin >> x;
+                Toggle(x);
+            }
+            else if (str[0] == 'e') 
+            {
+                Empty();
+            }
+            else
+            {
+                All();
+            }
+        }
+
+    return 0;
 }
