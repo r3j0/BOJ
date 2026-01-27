@@ -1,3 +1,4 @@
+# 1715 : 카드 정렬하기
 import sys
 import heapq
 input = sys.stdin.readline
@@ -5,14 +6,14 @@ input = sys.stdin.readline
 n = int(input().rstrip())
 arr = [int(input().rstrip()) for _ in range(n)]
 
-queue = []
-for a in arr: heapq.heappush(queue, a)
+q = []
+for i in range(n): heapq.heappush(q, arr[i])
 
-cost = 0
-while len(queue) != 1:
-    first = heapq.heappop(queue)
-    second = heapq.heappop(queue)
-    cost += first + second
-    heapq.heappush(queue, first + second)
+ans = 0
+while len(q) > 1:
+    first = heapq.heappop(q)
+    second = heapq.heappop(q)
+    heapq.heappush(q, first + second)
+    ans += first + second
 
-print(cost)
+print(ans)
