@@ -22,19 +22,16 @@ public class Main {
         dp[0][0] = 1;
 
         for (int c = 1; c <= k; c++) { // 사용한 정수 개수 c
-            for (int i = 1; i <= n; i++) { // 만들려는 숫자 i
-                for (int j = 0; j < i; j++) {
-                    for (int v = 0; v < c; v++) {
-                        dp[i][c] = (dp[i][c] + dp[j][v]) % MOD;
-                    }
+            for (int i = 0; i <= n; i++) { // 만들려는 숫자 i
+                // i를 만들기 위한 경우의 수를 추가할, 수 j 를 정수 c-1개를 사용해서 만들 때 경우의 수
+                // dp[j][c-1] + (i - j) 의 정수를 합해서 수 i 만들기
+                for (int j = 0; j <= i; j++) {
+                    dp[i][c] = (dp[i][c] + dp[j][c-1]) % MOD;
                 }
             }
         }
 
-        int result = 0;
-        for (int i = 0; i <= k; i++) {
-            result = (result + dp[n][i]) % MOD;
-        }
+        int result = dp[n][k];
 
         // Output Start
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
