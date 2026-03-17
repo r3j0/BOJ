@@ -6,8 +6,9 @@ def lemma(n, k):
     res = 0
     i = 1
     j = 0
-    while i <= k:
-        j = min(k, n // (n // i))
+    e = min(n, k)
+    while i <= e:
+        j = min(e, n // (n // i))
         res += (n // i) * (j - i + 1)
         i = j + 1
     return res
