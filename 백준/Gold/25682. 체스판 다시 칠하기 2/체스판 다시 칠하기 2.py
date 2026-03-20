@@ -17,16 +17,14 @@ for i in range(n):
         if char[((i + j) % 2) ^ 1] != arr[i][j]:
             sums[i+1][j+1][1] += 1
 
+ans = n * m
 for i in range(1, n+1):
     for j in range(1, m+1):
         for p in range(2):
             sums[i][j][p] += sums[i-1][j][p] + sums[i][j-1][p] - sums[i-1][j-1][p]
 
-ans = n * m
-for i in range(k, n+1):
-    for j in range(k, m+1):
-        for p in range(2):
-            now = sums[i][j][p] - sums[i-k][j][p] - sums[i][j-k][p] + sums[i-k][j-k][p]
-            ans = min(ans, now)
+            if i - k >= 0 and j - k >= 0:
+                now = sums[i][j][p] - sums[i-k][j][p] - sums[i][j-k][p] + sums[i-k][j-k][p]
+                ans = min(ans, now)
 
 print(ans)
