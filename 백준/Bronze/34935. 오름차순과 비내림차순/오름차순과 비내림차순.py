@@ -1,0 +1,5 @@
+n = int(input().rstrip())
+S = set()
+arr = list(map(int, input().rstrip().split()))
+for a in arr: S.add(a)
+print(1 if len(S) == n else 0)
