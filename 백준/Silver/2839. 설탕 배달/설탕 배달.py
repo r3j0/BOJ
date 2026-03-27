@@ -1,19 +1,15 @@
-n = int(input())
+# 2839 : 설탕 배달
+import sys
+input = sys.stdin.readline
 
-startm3 = n//3
-m3 = startm3
-mim5s = 0
-m5 = 0
-min = n
+n = int(input().rstrip())
+v5 = n // 5
+n %= 5
+while v5 > 0 and n % 3 != 0:
+    v5 -= 1
+    n += 5
 
-for i in range(m3,-1,-1):
-    mim5s = n - i*3
-    if mim5s%5 == 0:
-        m5 = mim5s//5
-        if min > (i+m5):
-            min = i+m5
-
-if min == n:
-    min = -1
-
-print(min)
+if n % 3 == 0:
+    print(v5 + n // 3)
+else:
+    print(-1)
