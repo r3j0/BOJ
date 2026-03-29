@@ -25,8 +25,6 @@ public class Main {
         br.close();
 
         // Solve : DP
-        Arrays.sort(arr);
-
         int[] dp = new int[k+1];
         dp[0] = 1;
 
