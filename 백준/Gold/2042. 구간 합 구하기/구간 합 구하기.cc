@@ -1,65 +1,46 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <iostream>
+#define fastio ios::sync_with_stdio(0);cin.tie(NULL);cout.tie(NULL);
+#define MAX 1000001
+using namespace std;
+typedef long long LL;
 
-#define ll long long
+LL arr[MAX];
+LL tree[MAX*4];
 
-ll init(ll* arr, ll* tree, ll node, ll start, ll end){
-    if (start == end)
-        return tree[node] = arr[start];
+LL build(int s, int e, int i) {
+    if (s == e) return tree[i] = arr[s];
 
-    ll mid = (start + end) / 2;
-
-    return tree[node] = init(arr, tree, node * 2, start, mid) + init(arr, tree, node * 2 + 1, mid + 1, end);
+    int m = (s + e) / 2;
+    return tree[i] = build(s, m, i * 2) + build(m + 1, e, i * 2 + 1);
 }
 
-void update(ll* tree, ll node, ll start, ll end, ll index, ll diff){
-    if (index < start || index > end) return;
+LL interval_sum(int s, int e, int i, int l, int r) {
+    if (e < l || r < s) return (LL)0;
+    if (l <= s && e <= r) return tree[i];
 
-    tree[node] += diff;
-
-    if (start != end) {
-        ll mid = (start + end) / 2;
-        update(tree, node * 2, start, mid, index, diff);
-        update(tree, node * 2 + 1, mid + 1, end, index, diff);
-    }
+    int m = (s + e) / 2;
+    return interval_sum(s, m, i * 2, l, r) + interval_sum(m + 1, e, i * 2 + 1, l, r);
 }
 
-ll sum(ll* tree, ll node, ll start, ll end, ll left, ll right){
-    if (left > end || right < start)
-        return 0;
+LL update(int s, int e, int i, int k, LL v) {
+    if (k < s || e < k) return tree[i];
+    if (s == e) return tree[i] = v;
 
-    if (left <= start && end <= right)
-        return tree[node];
-
-    ll mid = (start + end) / 2;
-
-    return sum(tree, node * 2, start, mid, left, right) + sum(tree, node * 2 + 1, mid + 1, end, left, right);
+    int m = (s + e) / 2;
+    return tree[i] = update(s, m, i * 2, k, v) + update(m + 1, e, i * 2 + 1, k, v);
 }
 
 int main() {
-    ll n, m, k;
-    scanf("%lld %lld %lld", &n, &m, &k);
-    ll* arr = (ll*)malloc(sizeof(ll) * (n + 1));
-    for(ll i=1; i<=n; i++){
-        scanf("%lld", &arr[i]);
-    }
-    ll h = (ll)ceil(log2(n));
-    ll tree_size = (1 << (h + 1));
-    ll* tree = (ll*)malloc(sizeof(ll) * tree_size);
-    init(arr, tree, 1, 1, n);
-    m += k;
-    while(m--){
-        ll a, b, c;
-        scanf("%lld %lld %lld", &a, &b, &c);
-        if(a == 1){
-            ll diff = c - arr[b];
-            arr[b] = c;
-            update(tree, 1, 1, n, b, diff);
-        }
-        else{
-            printf("%lld\n", sum(tree, 1, 1, n, b, c));
-        }
+    fastio
+    int n, m, k; cin >> n >> m >> k;
+
+    for (int i = 1; i <= n; i++) cin >> arr[i];
+    build(1, n, 1);
+
+    for (int i = 0; i < m + k; i++) {
+        LL a, b, c; cin >> a >> b >> c;
+        if (a == 1) update(1, n, 1, b, c);
+        else cout << interval_sum(1, n, 1, b, c) << '\n';
     }
     return 0;
 }
