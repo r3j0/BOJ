@@ -1,23 +1,32 @@
-#include <stdio.h>
+#include <iostream>
+#include <stack>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-int main(void) {
-    int k;
-    scanf("%d", &k);
+int main() {
+    fastio
+    // 1. K
+    // 2. K번 ( 숫자들, 0 )
+    int k; cin >> k;
+    stack<int> s;
 
-    int stack[100005];
-    int stackSize = 0;
-
-    for (int i = 0; i < k; i++) {
-        int n;
-        scanf("%d", &n);
-
-        if (n == 0) stackSize--;
-        else stack[stackSize++] = n;
+    while (k--) {
+        int n; cin >> n;
+        if (n == 0) {
+            s.pop();
+        }
+        else {
+            s.push(n);
+        }
     }
 
-    int result = 0;
-    for (int i = 0; i < stackSize; i++) result += stack[i];
+    int answer = 0;
+    while (!s.empty()) {
+        answer += s.top();
+        s.pop();
+    }
 
-    printf("%d", result);
+    cout << answer;
+
     return 0;
 }
