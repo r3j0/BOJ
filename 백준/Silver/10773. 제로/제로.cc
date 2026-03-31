@@ -5,28 +5,20 @@ using namespace std;
 
 int main() {
     fastio
-    // 1. K
-    // 2. K번 ( 숫자들, 0 )
-    int k; cin >> k;
+    int n; cin >> n;
     stack<int> s;
-
-    while (k--) {
-        int n; cin >> n;
-        if (n == 0) {
-            s.pop();
+    while (n--) {
+        int x; cin >> x;
+        if (x == 0) {
+            s.pop(); continue;
         }
-        else {
-            s.push(n);
-        }
+        s.push(x);
     }
-
-    int answer = 0;
+    int a = 0;
     while (!s.empty()) {
-        answer += s.top();
+        a += s.top();
         s.pop();
     }
-
-    cout << answer;
-
+    cout << a;
     return 0;
 }
