@@ -1,38 +1,41 @@
 #include <iostream>
-#include <string>
 #include <queue>
+#include <string>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
 using namespace std;
 
-int main(void) {
-	ios::sync_with_stdio(false); // Fase IO
-	cin.tie(NULL);
+int main() {
+    fastio
+    int n; cin >> n;
+    queue<int> q;
+    while (n--) {
+        string s; cin >> s;
+        if (s == "push") {
+            int k; cin >> k;
+            q.push(k);
+        }
+        else if (s == "pop") {
+            if (q.empty()) cout << -1 << '\n';
+            else {
+                cout << q.front() << '\n';
+                q.pop();
+            }
+        }
+        else if (s == "size") {
+            cout << q.size() << '\n';
+        }
+        else if (s == "empty") {
+            cout << q.empty() << '\n';
+        }
+        else if (s == "front") {
+            if (q.empty()) cout << -1 << '\n';
+            else cout << q.front() << '\n';
+        }
+        else if (s == "back") {
+            if (q.empty()) cout << -1 << '\n';
+            else cout << q.back() << '\n';
+        }
+    }
 
-	int n; cin >> n;
-	queue<int> q;
-
-	while (n--) {
-		string str; cin >> str;
-		if (!str.compare("push")) {
-			int value; cin >> value;
-			q.push(value);
-		}
-		else if (!str.compare("pop")) {
-			if (q.empty()) cout << -1 << "\n";
-			else {
-				cout << q.front() << "\n";
-				q.pop();
-			}
-		}
-		else if (!str.compare("size")) cout << q.size() << "\n";
-		else if (!str.compare("empty")) cout << q.empty() << "\n";
-		else if (!str.compare("front")) {
-			if (q.empty()) cout << -1 << "\n";
-			else cout << q.front() << "\n";
-		}
-		else if (!str.compare("back")) {
-			if (q.empty()) cout << -1 << "\n";
-			else cout << q.back() << "\n";
-		}
-	}
-	return 0;
+    return 0;
 }
