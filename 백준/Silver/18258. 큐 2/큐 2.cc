@@ -8,18 +8,19 @@ int main() {
     fastio
     int n; cin >> n;
     queue<int> q;
-    while (n--) {
+    while(n--) {
         string s; cin >> s;
         if (s == "push") {
-            int k; cin >> k;
-            q.push(k);
+            int x; cin >> x;
+            q.push(x);
         }
         else if (s == "pop") {
-            if (q.empty()) cout << -1 << '\n';
-            else {
-                cout << q.front() << '\n';
-                q.pop();
+            if (q.empty()) {
+                cout << -1 << '\n';
+                continue;
             }
+            cout << q.front() << '\n';
+            q.pop();
         }
         else if (s == "size") {
             cout << q.size() << '\n';
@@ -28,14 +29,19 @@ int main() {
             cout << q.empty() << '\n';
         }
         else if (s == "front") {
-            if (q.empty()) cout << -1 << '\n';
-            else cout << q.front() << '\n';
+            if (q.empty()) {
+                cout << -1 << '\n';
+                continue;
+            }
+            cout << q.front() << '\n';
         }
         else if (s == "back") {
-            if (q.empty()) cout << -1 << '\n';
-            else cout << q.back() << '\n';
+            if (q.empty()) {
+                cout << -1 << '\n';
+                continue;
+            }
+            cout << q.back() << '\n';
         }
     }
-
     return 0;
 }
