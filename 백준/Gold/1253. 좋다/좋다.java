@@ -28,25 +28,26 @@ public class Main {
         Arrays.sort(arr);
         for (int i = 0; i < n; i++) {
             int left = 0;
-            if (left == i) left += 1;
             int right = n - 1;
-            if (right == i) right -= 1;
 
             while (left < right) {
+                if (left == i) {
+                    left += 1;
+                    continue;
+                }
+                if (right == i) {
+                    right -= 1;
+                    continue;
+                }
+                
                 int now = arr[left] + arr[right];
                 if (now == arr[i]) {
                     answer += 1;
                     break;
                 }
 
-                if (now < arr[i]) {
-                    left += 1;
-                    if (left == i) left += 1;
-                }
-                else if (now > arr[i]) {
-                    right -= 1;
-                    if (right == i) right -= 1;
-                }
+                if (now < arr[i]) left += 1;
+                else if (now > arr[i]) right -= 1;
             }
         }
 
