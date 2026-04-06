@@ -1,37 +1,54 @@
-#include <stdio.h>
+#pragma GCC optimize ("O3")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
+#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-int line[101][101] = { 0, };
-int visit[101] = { 0, };
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+#define F first
+#define S second
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define each(x,a) for (auto &x : a)
+#define rep(i,s,n) for (auto i = s; i < (n); i++)
+#define endl '\n'
+const ll INF=INT64_MAX;
 
-int computer;
-int linenumber;
+int main() { fastio
+    // 2606 : 바이러스
+    int n, m; cin >> n >> m;
+    vi edges[n+1];
+    while (m--) {
+        int a, b; cin >> a >> b;
+        edges[a].pb(b);
+        edges[b].pb(a);
+    }
 
-void movemovemove(int go) {
-	for (int i = 1; i <= computer; i++) {
-		if (line[go][i] == 1 && visit[i] == 0) {
-			visit[i] = 1;
-			movemovemove(i);
-		}
-	}
-}
+    // BFS
+    queue<int> q;
+    vi vis(n+1, 0);
+    vis[1] = 1;
+    q.push(1);
+    int ans = -1;
+    while (!q.empty()) {
+        int now = q.front(); q.pop(); ans++;
+        for (auto& nxt : edges[now]) {
+            if (!vis[nxt]) {
+                vis[nxt] = 1;
+                q.push(nxt);
+            }
+        }
+    }
 
-int main(void) {
-	int go = 1;
-	scanf("%d", &computer);
-	scanf("%d", &linenumber);
-	for (int i = 0; i < linenumber; i++) {
-		int a, b;
-		scanf("%d %d", &a, &b);
-		line[a][b] = 1;
-		line[b][a] = 1;
-	}
-	visit[go] = 1;
-	movemovemove(go);
-	int cnt = 0;
-	for (int i = 2; i <= computer; i++) {
-		if (visit[i] == 1)
-			cnt++;
-	}
-	printf("%d", cnt);
-	return 0;
+    cout << ans;
+    return 0;
 }
