@@ -1,131 +1,102 @@
-#include <stdio.h>
-#include <stdlib.h>
-#define SIZE 100001
-typedef long long LL;
+#pragma GCC optimize ("O3")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
+#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-struct Node {
-	int sibling;
-	int child;
-};
-struct Node* seller[SIZE];
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+#define F first
+#define S second
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define each(x,a) for (auto &x : a)
+#define rep(i,n) for (auto i = 0; i < (n); i++)
+#define endl '\n'
+const ll INF = INT64_MAX;
+#define MAX 100001
 
-int start[SIZE];
-int end[SIZE];
-int visited = 1;
+vl arr(MAX), tree(MAX << 2), lazy(MAX << 2);
 
-int tree[SIZE * 4] = { 0, };
-int lazy[SIZE * 4] = { 0, };
-
-void dfs(int now) {
-	start[now] = visited++;
-	if (seller[now]->child != -1) {
-		dfs(seller[now]->child);
-	}
-	end[now] = visited - 1;
-	if (seller[now]->sibling != -1) {
-		dfs(seller[now]->sibling);
-	}
+void prop(int s, int e, int i) {
+    if (lazy[i] == 0) return;
+    tree[i] += lazy[i] * (e - s + 1);
+    if (s != e) {
+        lazy[i << 1] += lazy[i];
+        lazy[(i << 1) + 1] += lazy[i];
+    }
+    lazy[i] = (ll) 0;
 }
 
-void push(int start, int end, int idx) {
-	if (lazy[idx] != 0) {
-		tree[idx] += (end - start + 1) * lazy[idx];
-		if (start != end) {
-			lazy[idx * 2] += lazy[idx];
-			lazy[idx * 2 + 1] += lazy[idx];
-		}
-		lazy[idx] = 0;
-	}
+void interval_update(int s, int e, int i, int l, int r, ll v) {
+    prop(s, e, i);
+    if (e < l || r < s) return;
+    if (l <= s && e <= r) {
+        lazy[i] += v;
+        prop(s, e, i);
+        return;
+    }
+
+    int m = (s + e) >> 1;
+    interval_update(s, m, i << 1, l, r, v);
+    interval_update(m + 1, e, (i << 1) + 1, l, r, v);
+    tree[i] = tree[i << 1] + tree[(i << 1) + 1];
 }
 
-int getVal(int start, int end, int idx, int what, int* error) {
-	push(start, end, idx);
-	if (what < start || end < what) {
-		*error = 1;
-		return 0;
-	}
-	if (start == end) {
-		*error = 0;
-		return tree[idx];
-	}
+vi edge[MAX];
+int in[MAX];
+int out[MAX];
 
-	int mid = (start + end) / 2;
-	int e1 = 0;
-	int q1 = getVal(start, mid, idx * 2, what, &e1);
-	int e2 = 0;
-	int q2 = getVal(mid + 1, end, idx * 2 + 1, what, &e2);
-
-	if (e1 == 1 && e2 == 1) {
-		*error = 1;
-		return 0;
-	}
-	else {
-		if (e1 != 1) return q1;
-		else return q2;
-	}
+void dfs(int i) {
+    static int cnt = 0;
+    in[i] = ++cnt;
+    for (int next : edge[i]) {
+        dfs(next);
+    }
+    out[i] = cnt;
 }
 
-void update_range(int start, int end, int idx, int left, int right, int value) {
-	push(start, end, idx);
-	if (end < left || right < start) return;
-	if (left <= start && end <= right) {
-		tree[idx] += (end - start + 1) * value;
-		if (start != end) {
-			lazy[idx * 2] += value;
-			lazy[idx * 2 + 1] += value;
-		}
-		return;
-	}
+ll query(int s, int e, int i, int k) {
+    prop(s, e, i);
 
-	int mid = (start + end) / 2;
-	update_range(start, mid, idx * 2, left, right, value);
-	update_range(mid + 1, end, idx * 2 + 1, left, right, value);
-	tree[idx] = tree[idx * 2] + tree[idx * 2 + 1];
+    if (e < k || k < s) return (ll) 0;
+    if (s == e) return tree[i];
+
+    int m = (s + e) >> 1;
+    return query(s, m, i << 1, k) + query(m + 1, e, (i << 1) + 1, k);
 }
 
-int main(void) {
-	int n, m;
-	scanf("%d %d", &n, &m);	
-	for (int i = 1; i <= n; i++) {
-		seller[i] = (struct Node*)malloc(sizeof(struct Node));
-		seller[i]->sibling = -1;
-		seller[i]->child = -1;
-	}
+int main() {
+    fastio
+    // 16404 : 주식회사 승범이네
+    int n, m;
+    cin >> n >> m;
 
-	int root = 1;
-	for (int i = 1; i <= n; i++) {
-		int parent;
-		scanf("%d", &parent);
-		if (parent != -1) {
-			if (seller[parent]->child == -1) seller[parent]->child = i;
-			else {
-				int now = seller[parent]->child;
-				while (seller[now]->sibling != -1) {
-					now = seller[now]->sibling;
-				}
-				seller[now]->sibling = i;
-			}
-		}
-		else root = i;
-	}
-	dfs(root);
-	for (int i = 1; i <= n; i++) free(seller[i]);
+    // ETT
+    rep(i, n) {
+        int x; cin >> x;
+        if (x == -1) continue;
+        edge[x].pb(i+1);
+    }
 
-	for (int i = 0; i < m; i++) {
-		int mode;
-		scanf("%d", &mode);
+    dfs(1);
 
-		if (mode == 1) {
-			int i, w;
-			scanf("%d %d", &i, &w);
-			update_range(1, n, 1, start[i], end[i], w);
-		}
-		else {
-			int i, er;
-			scanf("%d", &i);
-			printf("%d\n", getVal(1, n, 1, start[i], &er));
-		}
-	}
+    rep(i, m) {
+        ll a, b;
+        cin >> a >> b;
+        if (a == 1) {
+            ll c; cin >> c;
+            interval_update(1, n, 1, in[b], out[b], c);
+        } else cout << query(1, n, 1, in[b]) << endl;
+    }
 
-	return 0;
+    return 0;
 }
