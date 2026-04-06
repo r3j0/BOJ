@@ -1,154 +1,131 @@
-#include <stdio.h>
-#include <stdlib.h>
-#define SIZE 100001
-typedef long long LL;
+#pragma GCC optimize ("O3")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
+#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-struct Node {
-	int sibling;
-	int child;
-};
-struct Node* seller[SIZE];
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+#define F first
+#define S second
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define each(x,a) for (auto &x : a)
+#define rep(i,n) for (auto i = 0; i < (n); i++)
+#define endl '\n'
+const ll INF = INT64_MAX;
+#define MAX 100001
 
-int start[SIZE];
-int end[SIZE];
-int visited = 1;
+vl arr(MAX);
+vl tree_d(MAX << 2);
+vl lazy_d(MAX << 2);
+vl tree_u(MAX << 2);
 
-int stree[SIZE * 4] = { 0, };
-int slazy[SIZE * 4] = { 0, };
-
-int btree[SIZE * 4] = { 0, };
-int blazy[SIZE * 4] = { 0, };
-
-void dfs(int now) {
-	start[now] = visited++;
-	if (seller[now]->child != -1) {
-		dfs(seller[now]->child);
-	}
-	end[now] = visited - 1;
-	if (seller[now]->sibling != -1) {
-		dfs(seller[now]->sibling);
-	}
+void prop(int s, int e, int i) {
+    if (lazy_d[i] == 0) return;
+    tree_d[i] += (lazy_d[i]) * (e - s + 1);
+    if (s != e) {
+        lazy_d[i<<1] += lazy_d[i];
+        lazy_d[(i<<1)+1] += lazy_d[i];
+    }
+    lazy_d[i] = 0;
 }
 
-void spush(int start, int end, int idx) {
-	if (slazy[idx] != 0) {
-		stree[idx] += (end - start + 1) * slazy[idx];
-		if (start != end) {
-			slazy[idx * 2] += slazy[idx];
-			slazy[idx * 2 + 1] += slazy[idx];
-		}
-		slazy[idx] = 0;
-	}
+ll interval_sum(int s, int e, int i, int l, int r) {
+    if (e < l || r < s) return (ll)0;
+    if (l <= s && e <= r) return tree_u[i];
+
+    int m = (s + e) >> 1;
+    return interval_sum(s, m, i << 1, l, r) + interval_sum(m + 1, e, (i << 1) + 1, l, r);
 }
 
-int sgetSum(int start, int end, int idx, int left, int right) {
-	spush(start, end, idx);
-	if (end < left || right < start) return 0;
-	if (left <= start && end <= right) return stree[idx];
+ll one_sum(int s, int e, int i, int k) {
+    prop(s, e, i);
+    if (k < s || e < k) return (ll)0;
+    if (s == e) return tree_d[i];
 
-    int mid = (start + end) / 2;
-	return sgetSum(start, mid, idx * 2, left, right) + sgetSum(mid + 1, end, idx * 2 + 1, left, right);
+    int m = (s + e) >> 1;
+    return one_sum(s, m, i << 1, k) + one_sum(m+1, e, (i << 1) + 1, k);
 }
 
-void supdate_range(int start, int end, int idx, int left, int right, int value) {
-	spush(start, end, idx);
-	if (end < left || right < start) return;
-	if (left <= start && end <= right) {
-        slazy[idx] += value;
-		spush(start, end, idx);
-		return;
-	}
+void range_update(int s, int e, int i, int l, int r, ll v) {
+    prop(s, e, i);
+    if (e < l || r < s) return;
+    if (l <= s && e <= r) {
+        lazy_d[i] += v;
+        prop(s, e, i);
+        return;
+    }
 
-	int mid = (start + end) / 2;
-	supdate_range(start, mid, idx * 2, left, right, value);
-	supdate_range(mid + 1, end, idx * 2 + 1, left, right, value);
-	stree[idx] = stree[idx * 2] + stree[idx * 2 + 1];
+    int m = (s + e) >> 1;
+    range_update(s, m, i << 1, l, r, v);
+    range_update(m + 1, e, (i << 1) + 1, l, r, v);
+    tree_d[i] = tree_d[i<<1] + tree_d[(i<<1)+1];
 }
 
-void bpush(int start, int end, int idx) {
-	if (blazy[idx] != 0) {
-		btree[idx] += (end - start + 1) * blazy[idx];
-		if (start != end) {
-			blazy[idx * 2] += blazy[idx];
-			blazy[idx * 2 + 1] += blazy[idx];
-		}
-		blazy[idx] = 0;
-	}
+void update(int s, int e, int i, int k, ll v) {
+    if (e < k || k < s) return;
+    if (s == e) {
+        tree_u[i] += v;
+        return;
+    }
+
+    int m = (s + e) >> 1;
+    update(s, m, i << 1, k, v);
+    update(m+1, e, (i << 1)+1,k,v);
+    tree_u[i] = tree_u[i<<1] + tree_u[(i<<1)+1];
 }
 
-int bgetSum(int start, int end, int idx, int left, int right) {
-	bpush(start, end, idx);
-	if (end < left || right < start) return 0;
-	if (left <= start && end <= right) return btree[idx];
+vi edge[MAX];
+int in[MAX];
+int out[MAX];
 
-    int mid = (start + end) / 2;
-	return bgetSum(start, mid, idx * 2, left, right) + bgetSum(mid + 1, end, idx * 2 + 1, left, right);
+void dfs(int i) {
+    static int cnt = 0;
+    in[i] = ++cnt;
+    for (int next : edge[i]) {
+        dfs(next);
+    }
+    out[i] = cnt;
 }
 
-void bupdate_range(int start, int end, int idx, int left, int right, int value) {
-	bpush(start, end, idx);
-	if (end < left || right < start) return;
-	if (left <= start && end <= right) {
-        blazy[idx] += value;
-		bpush(start, end, idx);
-		return;
-	}
+int main() {
+    fastio
+    // 14288 : 회사 문화 4
+    int n, m;
+    cin >> n >> m;
 
-	int mid = (start + end) / 2;
-	bupdate_range(start, mid, idx * 2, left, right, value);
-	bupdate_range(mid + 1, end, idx * 2 + 1, left, right, value);
-	btree[idx] = btree[idx * 2] + btree[idx * 2 + 1];
-}
+    // ETT
+    rep(i, n) {
+        int x; cin >> x;
+        if (x == -1) continue;
+        edge[x].pb(i+1);
+    }
 
-int main(void) {
-	int n, m;
-	scanf("%d %d", &n, &m);	
-	for (int i = 1; i <= n; i++) {
-		seller[i] = (struct Node*)malloc(sizeof(struct Node));
-		seller[i]->sibling = -1;
-		seller[i]->child = -1;
-	}
+    dfs(1);
+    int mode = 0;
 
-	int root = 1;
-	for (int i = 1; i <= n; i++) {
-		int parent;
-		scanf("%d", &parent);
-		if (parent != -1) {
-			if (seller[parent]->child == -1) seller[parent]->child = i;
-			else {
-				int now = seller[parent]->child;
-				while (seller[now]->sibling != -1) {
-					now = seller[now]->sibling;
-				}
-				seller[now]->sibling = i;
-			}
-		}
-		else root = i;
-	}
-	dfs(root);
-	for (int i = 1; i <= n; i++) free(seller[i]);
-
-    int hug = 0;
-	for (int i = 0; i < m; i++) {
-		int mode;
-		scanf("%d", &mode);
-
-		if (mode == 1) {
-			int i, w;
-			scanf("%d %d", &i, &w);
-            if (hug == 0) supdate_range(1, n, 1, start[i], end[i], w);
-			else bupdate_range(1, n, 1, start[i], start[i], w);
-		}
-		else if (mode == 2){
-			int i;
-			scanf("%d", &i);
-            printf("%d\n", sgetSum(1, n, 1, start[i], start[i]) + bgetSum(1, n, 1, start[i], end[i]));
-		}
-        else {
-            if (hug == 0) hug = 1;
-            else hug = 0;
+    rep(i, m) {
+        ll a; cin >> a;
+        if (a == 1) {
+            int b; ll c; cin >> b >> c;
+            if (mode == 0) range_update(1, n, 1, in[b], out[b], c);
+            else update(1, n, 1, in[b], c);
         }
-	}
+        else if (a == 2) {
+            int b; cin >> b;
+            cout << interval_sum(1, n, 1, in[b], out[b]) + one_sum(1, n, 1, in[b]) << endl;
+        }
+        else mode ^= 1;
+    }
 
-	return 0;
+    return 0;
 }
