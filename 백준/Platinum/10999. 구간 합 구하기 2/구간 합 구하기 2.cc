@@ -1,81 +1,86 @@
-#include <stdio.h>
+#pragma GCC optimize ("O3")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
+#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-long long int arr[1000001];
-long long int tree[4000004];
-long long int lazy[4000004];
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+#define F first
+#define S second
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define each(x,a) for (auto &x : a)
+#define rep(i,n) for (auto i = 0; i < (n); i++)
+#define endl '\n'
+const ll INF=INT64_MAX;
+#define MAX 2000000
 
-long long int init(int start, int end, int idx) {
-	if (start == end) {
-		tree[idx] = arr[start];
-		return tree[idx];
-	}
-	else {
-		int mid = (start + end) / 2;
-		tree[idx] = init(start, mid, idx * 2) + init(mid + 1, end, idx * 2 + 1);
-		return tree[idx];
-	}
+vl arr(MAX), tree(MAX << 2), lazy(MAX << 2);
+
+void build(int s, int e, int i) {
+    if (s == e) {
+        tree[i] = arr[s];
+        return;
+    }
+
+    int m = (s + e) >> 1;
+    build(s, m, i << 1);
+    build(m + 1, e, (i << 1) + 1);
+    tree[i] = tree[i << 1] + tree[(i << 1) + 1];
 }
 
-void update_lazy(int start, int end, int idx) {
-	if (lazy[idx] != 0) {
-		tree[idx] += (end - start + 1) * lazy[idx];
-		if (start != end) {
-			lazy[idx * 2] += lazy[idx];
-			lazy[idx * 2 + 1] += lazy[idx];
-		}
-		lazy[idx] = 0;
-	}
+void prop(int s, int e, int i) {
+    if (lazy[i] == 0) return;
+    tree[i] += lazy[i] * (e - s + 1);
+    if (s != e) {
+        lazy[i << 1] += lazy[i];
+        lazy[(i << 1) + 1] += lazy[i];
+    }
+    lazy[i] = (ll)0;
 }
+void interval_update(int s, int e, int i, int l, int r, ll v) {
+    prop(s, e, i);
+    if (e < l || r < s) return;
+    if (l <= s && e <= r) {
+        lazy[i] += v;
+        prop(s, e, i);
+        return;
+    }
 
-void update_range(int start, int end, int idx, int left, int right, long long int value) {
-	update_lazy(start, end, idx);
-	if (end < left || right < start) return;
-	if (left <= start && end <= right) {
-		tree[idx] += (end - start + 1) * value;
-		if (start != end) {
-			lazy[idx * 2] += value;
-			lazy[idx * 2 + 1] += value;
-		}
-		return;
-	}
-
-	int mid = (start + end) / 2;
-	update_range(start, mid, idx * 2, left, right, value);
-	update_range(mid + 1, end, idx * 2 + 1, left, right, value);
-	tree[idx] = tree[idx * 2] + tree[idx * 2 + 1];
+    int m = (s + e) >> 1;
+    interval_update(s, m, i << 1, l, r, v);
+    interval_update(m + 1, e, (i << 1) + 1, l, r, v);
+    tree[i] = tree[i << 1] + tree[(i << 1) + 1];
 }
-
-long long int query(int start, int end, int idx, int left, int right) {
-	update_lazy(start, end, idx);
-
-	if (end < left || right < start) return 0;
-	if (left <= start && end <= right) return tree[idx];
-
-	int mid = (start + end) / 2;
-	return query(start, mid, idx * 2, left, right) + query(mid + 1, end, idx * 2 + 1, left, right);
+ll interval_sum(int s, int e, int i, int l, int r) {
+    prop(s, e, i);
+    if (e < l || r < s) return (ll)0;
+    if (l <= s && e <= r) return tree[i];
+    int m = (s + e) >> 1;
+    return interval_sum(s, m, i << 1, l, r) + interval_sum(m + 1, e, (i << 1) + 1, l, r);
 }
+int main() { fastio
+    // 10999 : 구간 합 구하기 2
+    int n, m, k; cin >> n >> m >> k;
+    rep(i,n) cin >> arr[i+1];
+    build(1, n, 1);
+    rep(i,m+k) {
+        ll a, b, c; cin >> a >> b >> c;
+        if (a == 1) {
+            ll d; cin >> d;
+            interval_update(1, n, 1, b, c, d);
+        }
+        else cout << interval_sum(1, n, 1, b, c) << endl;
+    }
 
-int main(void) {
-	int n, m, k;
-	scanf("%d %d %d", &n, &m, &k);
-	for (int i = 0; i < n; i++) scanf("%lld", &arr[i]);
-
-	init(0, n - 1, 1);
-
-	for (int i = 0; i < m+k; i++) {
-		int mode = 0;
-		scanf("%d", &mode);
-		if (mode == 1) {
-			int n1, n2;
-			long long int n3;
-			scanf("%d %d %lld", &n1, &n2, &n3);
-			update_range(0, n - 1, 1, n1 - 1, n2 - 1, n3);
-		}
-		else {
-			int n1, n2;
-			scanf("%d %d", &n1, &n2);
-			printf("%lld\n", query(0, n - 1, 1, n1 - 1, n2 - 1));
-		}
-	}
-	return 0;
+    return 0;
 }
