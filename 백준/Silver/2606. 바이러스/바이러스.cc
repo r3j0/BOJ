@@ -22,33 +22,26 @@ typedef vector<ll> vl;
 #define rep(i,s,n) for (auto i = s; i < (n); i++)
 #define endl '\n'
 const ll INF=INT64_MAX;
+#define MAX 100
 
-int main() { fastio
+vector<int> graph[MAX+1];
+bool vis[MAX+1];
+int ans = 0;
+void dfs(int now) {
+    vis[now] = true; ans++;
+    for (auto& nxt : graph[now]) {
+        if (!vis[nxt]) dfs(nxt);
+    }
+}
+
+int main() { fastio 
     // 2606 : 바이러스
     int n, m; cin >> n >> m;
-    vi edges[n+1];
-    while (m--) {
+    while(m--) {
         int a, b; cin >> a >> b;
-        edges[a].pb(b);
-        edges[b].pb(a);
+        graph[a].pb(b);
+        graph[b].pb(a);
     }
-
-    // BFS
-    queue<int> q;
-    vi vis(n+1, 0);
-    vis[1] = 1;
-    q.push(1);
-    int ans = -1;
-    while (!q.empty()) {
-        int now = q.front(); q.pop(); ans++;
-        for (auto& nxt : edges[now]) {
-            if (!vis[nxt]) {
-                vis[nxt] = 1;
-                q.push(nxt);
-            }
-        }
-    }
-
-    cout << ans;
+    dfs(1); cout << ans - 1;
     return 0;
 }
