@@ -1,60 +1,60 @@
-#include <stdio.h>
+#pragma GCC optimize ("O3")
+#pragma GCC optimize ("Ofast")
+#pragma GCC optimize ("unroll-loops")
+#include <bits/stdc++.h>
+#define fastio ios::sync_with_stdio(false);cin.tie(NULL);cout.tie(NULL);
+using namespace std;
 
-int n;
-char map[27][27];
-int visited[25][25] = {0,};
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef __int128_t LL;
+typedef __uint128_t ULL;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef vector<int> vi;
+typedef vector<ll> vl;
+#define F first
+#define S second
+#define pb(x) push_back(x)
+#define all(x) (x).begin(), (x).end()
+#define each(x,a) for (auto &x : a)
+#define rep(i,s,n) for (auto i = s; i < (n); i++)
+#define endl '\n'
+const ll INF=INT64_MAX;
 
-int result[200];
-int result_size = 0;
+string board[26];
+bool vis[26][26];
+vi ans;
+int n; 
+int dx[] = {-1, 1, 0, 0};
+int dy[] = {0, 0, -1, 1};
 
-int row[4] = {-1, 1, 0, 0};
-int col[4] = {0, 0, -1, 1};
-
-int dfs(int y, int x) {
-    int cnt = 1;
-    for(int d = 0; d < 4; d++) {
-        int ny = y + row[d];
-        int nx = x + col[d];
-
-        if (0 <= ny && ny < n && 0 <= nx && nx < n && map[ny][nx] == '1' && visited[ny][nx] == 0) {
-            visited[ny][nx] = 1;
-            cnt += dfs(ny, nx);
-        }
+int dfs(int x, int y) {
+    vis[x][y] = true;
+    int now = 1;
+    rep(d,0,4) {
+        int nx = x + dx[d];
+        int ny = y + dy[d];
+        if (nx < 0 || nx >= n || ny < 0 || ny >= n || board[nx][ny] == '0' || vis[nx][ny]) continue;
+        now += dfs(nx, ny);
     }
-    return cnt;
+    return now;
 }
 
-int main(void) {
-    scanf("%d", &n);
-    for(int i = 0; i < n; i++) scanf("%s", map[i]);
-
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if (map[i][j] == '1' && visited[i][j] == 0) {
-                visited[i][j] = 1;
-                int value = dfs(i, j);
-
-                result[result_size++] = value;                
+int main() { fastio 
+    // 2667 : 단지번호붙이기
+    cin >> n;
+    rep(i,0,n) cin >> board[i];
+    rep(i,0,n) {
+        rep(j,0,n) {
+            if (!vis[i][j] && board[i][j] == '1') {
+                ans.pb(dfs(i, j));
             }
         }
     }
-
-    printf("%d\n", result_size);
-    for(int i = 0; i < result_size - 1; i++) {
-        int min = i;
-        for(int j = i + 1; j < result_size; j++) {
-            if (result[min] > result[j]) min = j;
-        }
-
-        if (min != i) {
-            int tmp = result[min];
-            result[min] = result[i];
-            result[i] = tmp;
-        }
-    }
-
-    for(int i = 0; i < result_size; i++) 
-        printf("%d\n", result[i]);
-
+    cout << ans.size() << endl;
+    sort(all(ans));
+    each(a,ans) cout << a << endl;
     return 0;
 }
