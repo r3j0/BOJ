@@ -26,24 +26,18 @@ const ll INF=INT64_MAX;
 int a, b; 
 vi graph[MAX+1];
 bool vis[MAX+1];
-bool ans = false;
 int dfs(int now) {
     vis[now] = true;
     if (now == b) {
-        ans = true;
         return 0;
     } 
-    int res = -1;
     for (auto& nxt : graph[now]) {
         if (!vis[nxt]) {
-            int now = dfs(nxt);
-            if (now != -1) {
-                if (res == -1) res = now + 1;
-                else res = min(res, now + 1);
-            }
+            int x = dfs(nxt);
+            if (x > -1) return x + 1;
         }
     }
-    return res;
+    return -1;
 }
 int main() { fastio 
     // 2644 : 촌수계산
